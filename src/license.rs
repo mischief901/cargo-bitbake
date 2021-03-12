@@ -14,6 +14,7 @@ use std::io;
 use std::path::Path;
 
 pub const CLOSED_LICENSE: &str = "CLOSED";
+pub const TULIP: &str = "TULIP";
 
 /// For a given file at path `license_file`, generate the MD5 sum
 fn file_md5<P: AsRef<Path>>(license_file: P) -> Result<String, io::Error> {
@@ -33,6 +34,11 @@ pub fn file(crate_root: &Path, rel_dir: &Path, license_name: &str, single_licens
     // under which this is released. So special case it
     if license_name == CLOSED_LICENSE {
         return "".into();
+    }
+
+    // TULIP is another special case for us.
+    if license_name == TULIP {
+        return "file://${THISDIR}/COPYING;md5=10ada72850ce1a67ee4037ed05dc6a15".into();
     }
 
     // if the license exists at the top level then

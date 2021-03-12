@@ -110,6 +110,7 @@ impl<'cfg> PackageInfo<'cfg> {
     fn rel_dir(&self) -> CargoResult<PathBuf> {
         // this is the top level of the workspace
         let root = self.ws.root().to_path_buf();
+        eprintln!("root path: {:?}", root);
         // path where our current package's Cargo.toml lives
         let cwd = self.current_manifest.parent().ok_or_else(|| {
             format_err!(
@@ -117,6 +118,7 @@ impl<'cfg> PackageInfo<'cfg> {
                 self.current_manifest.display()
             )
         })?;
+        eprintln!("CWD: {:?}", cwd);
 
         Ok(cwd
             .strip_prefix(&root)
@@ -303,7 +305,8 @@ fn real_main(options: Args, config: &mut Config) -> CliResult {
 
     // compute the relative directory into the repo our Cargo.toml is at
     let rel_dir = md.rel_dir()?;
-
+    eprintln!("Relative Directory: {:?}", rel_dir);
+    
     // license files for the package
     let mut lic_files = vec![];
     let licenses: Vec<&str> = license.split('/').collect();
@@ -353,7 +356,7 @@ fn real_main(options: Args, config: &mut Config) -> CliResult {
     // write the contents out
     write!(
         file,
-        include_str!("bitbake.template"),
+        include_str!("templates/bitbake.template"),
         name = package.name(),
         version = package.version(),
         summary = summary,
